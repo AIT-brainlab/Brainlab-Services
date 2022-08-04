@@ -2,3 +2,5 @@
 /etc_host/*
 /root/*
 !.keeps
+!jupyterhub_config.py
+!new-cert.sh
