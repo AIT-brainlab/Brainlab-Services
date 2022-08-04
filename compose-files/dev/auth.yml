@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  auth-frontend:
+    build:
+      context: ../../auth-service/auth-frontend
+      dockerfile: dev.Dockerfile
+
+    volumes:
+      - ../../auth-service/auth-frontend/app:/home/app
+      - /home/app/node_modules
+      - ../../.vscode-auth-frontend:/root/.vscode-server
+
+    labels:
+      - "traefik.http.routers.auth-frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.auth-frontend.service=auth-frontend"
+      - "traefik.http.routers.auth-frontend.entrypoints=web"
+      - "traefik.http.services.auth-frontend.loadbalancer.server.port=80"
+
+
+  auth-backend:
+    build:
+      context: ../../auth-service/auth-backend
+      dockerfile: dev.Dockerfile
+    env_file:
+      - ../../auth-service/auth-backend/dev.env
+    volumes:
+      - ../../auth-service/auth-backend/src:/home/src
+      - ../../.vscode-auth-backend:/root/.vscode-server
+
+    
+    labels:
+      - "traefik.http.routers.auth-backend.rule=PathPrefix(`/auth/api`)"
+      - "traefik.http.routers.auth-backend.service=auth-backend"
+      - "traefik.http.routers.auth-backend.entrypoints=web"
+      - "traefik.http.services.auth-backend.loadbalancer.server.port=8000"
+    secrets:
+      - all_db_user.txt
+      - all_db_password.txt
+      - email_app_password.json
+
+secrets:
+  all_db_user.txt:
+    file: ../../secret/dev/all_db_user.txt
+  all_db_password.txt:
+    file: ../../secret/dev/all_db_password.txt
+  email_app_password.json:
+    file: ../../secret/prod/email_app_password.json

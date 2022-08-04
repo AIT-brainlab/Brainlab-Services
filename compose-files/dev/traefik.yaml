@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  traefik:
+ 
+    image: traefik:v2.8.1
+  
+    ports:
+   
+      - "80:80"
+      - "443:443"
+     
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      
+
+      - TRAEFIK_PROVIDERS_DOCKER=true
+      - TRAEFIK_ENTRYPOINTS_web=true
+      - TRAEFIK_ENTRYPOINTS_web_ADDRESS=:80
+
+      - TRAEFIK_ENTRYPOINTS_websecure=true
+      - TRAEFIK_ENTRYPOINTS_websecure_ADDRESS=:443
+

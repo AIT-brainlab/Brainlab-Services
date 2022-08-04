@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  {{student_id}}-container:
+    build: 
+      context: .
+      dockerfile: cpu.Dockerfile
+    volumes:
+      - {{student_id}-volume:/home/{{student_id}}
+      - ../.vscode-server/.vscode-server-{{student_id}}:/root/.vscode-server
+
+    labels:
+      - "traefik.http.middlewares.auth.forwardauth.address=http://auth-backend/authc/who_are_they"
+      - "traefik.http.routers.{{student_id}}-container.rule=Host(`{{student_id}}.localhost`)"
+      - "traefik.http.routers.{{student_id}}-container.service={{student_id}}-container"
+      - "traefik.http.routers.{{student_id}}-container.entrypoints=web"
+      - "traefik.http.services.{{student_id}}-container.loadbalancer.server.port=8888"
+
+volumes:
+  {{student_id}}-volume:
