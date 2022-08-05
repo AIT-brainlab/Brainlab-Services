@@ -30,11 +30,12 @@ if __name__ == "__main__":
 
     mode:Mode
     cmd:str
-    if len(sys.argv)<=2 and "--dev" not in sys.argv[1] or "--prod" not in sys.argv[1]:
-        mode = Mode.DEV
-        cmd = " ".join(sys.argv[1:len(sys.argv)])
-    else:
+    
+    if  "--dev" in sys.argv[1] or "--prod" in sys.argv[1]:
         mode = Mode.factory(sys.argv[1].replace("--",""))
         cmd = " ".join(sys.argv[2:len(sys.argv)])
+    else:
+        mode = Mode.DEV
+        cmd = " ".join(sys.argv[1:len(sys.argv)])
 
     main(mode,cmd)

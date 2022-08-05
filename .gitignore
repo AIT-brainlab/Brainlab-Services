@@ -2,7 +2,7 @@
 
 data
 secret/prod
-student-containers
+user-custom-dockerfile
 st*-compose.yml
 .vscode-server
 
