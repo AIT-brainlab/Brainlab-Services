@@ -9,7 +9,7 @@ services:
     volumes:
       - ../../auth-service/auth-frontend/app:/home/app
       - /home/app/node_modules
-      - ../../.vscode-auth-frontend:/root/.vscode-server
+      - ../../.vscode-server/.vscode-auth-frontend:/root/.vscode-server
 
     labels:
       - "traefik.http.routers.auth-frontend.rule=PathPrefix(`/`)"
@@ -26,7 +26,7 @@ services:
       - ../../auth-service/auth-backend/dev.env
     volumes:
       - ../../auth-service/auth-backend/src:/home/src
-      - ../../.vscode-auth-backend:/root/.vscode-server
+      - ../../.vscode-server.vscode-auth-backend:/root/.vscode-server
 
     
     labels:
@@ -38,6 +38,25 @@ services:
       - all_db_user.txt
       - all_db_password.txt
       - email_app_password.json
+  coredb: 
+    image: mongo:5.0.9-focal
+   
+    environment:
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/all_db_user.txt
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/all_db_password.txt
+
+    secrets:
+      - all_db_user.txt
+      - all_db_password.txt
+    
+    volumes:
+      - coredb-volume:/data/db
+
+    ports:
+      - 27017:27017
+
+volumes:
+  coredb-volume:
 
 secrets:
   all_db_user.txt:

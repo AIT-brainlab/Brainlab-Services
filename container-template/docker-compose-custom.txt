@@ -1,7 +1,9 @@
 version: "3.8"
 services:
    --student_id---container:
-    image: --dockerimage--
+    build: 
+      context: ../../student-containers
+      dockerfile: --dockerimage--
     volumes:
       -  --student_id---volume:/home/container
       - ../../.vscode-server/--student_id--:/root/.vscode-server
@@ -10,6 +12,7 @@ services:
     labels:
       - "traefik.http.middlewares.auth.forwardauth.address=http://auth-backend:8000/authc/who_are_they"
       - "traefik.http.routers.--student_id---container.middlewares=auth"
+
 
 
 

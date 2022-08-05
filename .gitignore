@@ -2,9 +2,9 @@
 
 data
 secret/prod
-
-
-
+student-containers
+st*-compose.yml
+.vscode-server
 
 
 # Logs

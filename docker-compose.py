@@ -7,10 +7,12 @@ import os
 def main(mode:Mode, cmd:str)->None:
     directory:str = f"./compose-files/{mode.value}".lower()
     compose_files:list[str] = os.listdir(directory)
+  
     compose_files = [ os.path.join(directory,f) for f in compose_files]
     compose_string:str = f"-f {' -f '.join(compose_files)}"
     final_cmd = f"docker-compose -p brain-lab-{mode.value.lower()} {compose_string} {cmd}"
     subprocess.run(final_cmd, shell=True, check=True)
+    # print(final_cmd)
 
 class Mode(Enum):
     DEV:str = 'DEV'
@@ -28,11 +30,10 @@ if __name__ == "__main__":
 
     mode:Mode
     cmd:str
-    if "--dev" or "--prod" not in sys.argv[1]:
+    if len(sys.argv)<=2 and "--dev" not in sys.argv[1] or "--prod" not in sys.argv[1]:
         mode = Mode.DEV
         cmd = " ".join(sys.argv[1:len(sys.argv)])
-
-    if "--dev" or "--prod" in sys.argv[1]:
+    else:
         mode = Mode.factory(sys.argv[1].replace("--",""))
         cmd = " ".join(sys.argv[2:len(sys.argv)])
 

@@ -1,9 +1,10 @@
 from __future__ import annotations
 import argon2
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, HTTPException, Response, Cookie, Request, Header
+from fastapi.responses import RedirectResponse
 import pymongo
 from pymongo.errors import DuplicateKeyError
-from config import BASE_PATH, LASTEST_PASSWORD_ALG, URL_RESET_EMAIL
+from config import BASE_PATH, DOMAIN, LASTEST_PASSWORD_ALG, URL_RESET_EMAIL
 from pydantic import BaseModel
 from mongo_service import MongoService
 from datetime import datetime
@@ -13,14 +14,25 @@ from hashlib import sha256
 from passlib.hash import phpass  # type:ignore
 import secrets
 import uuid
+from fastapi.middleware.cors import CORSMiddleware
+import sys
+import os
+
 password_hasher = PasswordHasher()
 MongoService.init_db()
 app = FastAPI(docs_url=None)
-
+origins = [
+    os.environ["HOST"]
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class UserInput(BaseModel):
-    firstname: str
-    lastname: str
     username: str
     email: str
     password: str
@@ -103,6 +115,7 @@ def login(username: str, password: str, resp:Response)->dict:
     }) 
     resp.set_cookie("session_id",session_id)
 
+
     return {"result":1}
 
 
@@ -177,8 +190,26 @@ def hash_verify(hash1: str, hash2: str) -> bool:
     return all(bools)
 
 
+
+
+
 @app.get('/authc/who_are_they')
-def get_user_id_by_session_id(session_id:str):
+def get_user_id_by_session_id( head:str=Header(default="",alias="X-Forwarded-Uri"), session_id:str = Cookie(default="")):
+    username = head.split("/")[1]
+    
+  
+    user = MongoService.get_user_session_instance().find_one({"session_id":hash_function(session_id)})
+    if user is None:
+        raise HTTPException(404,"session not found")
+    user_id:str = user['user_id']
+    q = MongoService.get_user_collection_instance().find_one({"user_id":user_id})
+
+    if q is None:
+        raise HTTPException(404,"session not found")
+    q_username = q['username']
+    if q_username != username:
+        raise HTTPException(404,"session not found")
+
     q = MongoService.get_user_session_instance().find_one_and_update(
         {
             "session_id": hash_function(session_id)

@@ -15,6 +15,7 @@ const restAPIGet = async(path:string, onFailure?:(resp:Response)=>void ):Promise
 }
 
 const restAPIMethod = async(path:string, method:string, body:any, onSuccess:(jsonData:any) => void, onFailure:(resp:Response) => void) => {
+    console.log(JSON.stringify(body))
     const resp = await fetch(path, {
         method,
         headers: {

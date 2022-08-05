@@ -1,16 +1,13 @@
 <template>
     <h1>Register</h1>
-    <div>
-        <label>firstname</label>
-        <input type="text" v-model="firstname">
-    </div>
-    <div>
-        <label>lastname</label>
-     <input type="text" v-model="lastname">
-    </div>
+    
     <div>
         <label>username</label>
      <input type="text" v-model="username">
+    </div>
+     <div>
+        <label>email</label>
+     <input type="text" v-model="email">
     </div>
     <div>
         <label>password</label>
@@ -27,10 +24,11 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import {restAPIMethod} from "../script/RestAPIHelper"
+import { useRouter } from 'vue-router'
 export default defineComponent({
     setup() {
-        const firstname = ref("")
-        const lastname = ref("")
+
+        const router = useRouter()
         const username = ref("")
         const email = ref("")
         const password = ref("")
@@ -39,19 +37,17 @@ export default defineComponent({
         const submit = () =>{
             // TODO: password == password2
             restAPIMethod('/auth/api/register','POST',{
-                    firstname:firstname.value,
-                    lastname:lastname.value,
                     username:username.value,
                     email:email.value,
                     password:password.value
                 
-            },(resp)=>{console.log(resp)},async (resp)=>{
+            },(resp)=>{router.push("/")},async (resp)=>{
                 let json_detail = await resp.json()
                 console.log(json_detail)
             })
         }
         return {
-            firstname,lastname,username,email,password,password2,submit
+            username,email,password,password2,submit
         }
     },
 })
