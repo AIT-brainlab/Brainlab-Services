@@ -1,11 +1,11 @@
 c.JupyterHub.shutdown_on_logout = True
-c.JupyterHub.ssl_key = '/root/private-selfsigned.key'
-c.JupyterHub.ssl_cert = '/root/selfsigned.crt'
-#c.JupyterHub.ssl_key = '/etc/letsencrypt/live/tokyo.cs.ait.ac.th/privkey.pem'
-# c.JupyterHub.ssl_cert = '/etc/letsencrypt/live/tokyo.cs.ait.ac.th/fullchain.pem'
+# c.JupyterHub.ssl_key = '/root/private-selfsigned.key'
+# c.JupyterHub.ssl_cert = '/root/selfsigned.crt'
+c.JupyterHub.ssl_key = '/cert/privkey.pem'
+c.JupyterHub.ssl_cert = '/cert/fullchain.pem'
 c.JupyterHub.ip = '0.0.0.0'
 c.JupyterHub.port = 443
-
+c.Authenticator.admin_users = set({'admin'})
 # Configuration file for jupyterhub.
 
 #------------------------------------------------------------------------------

@@ -10,6 +10,7 @@ services:
       - ./root:/root
       - ./home:/home
       - ./etc_host:/etc_host
+      - ./cert:/cert
     ports:
       - 8000:8000
       - 80:80
@@ -22,9 +23,9 @@ services:
         limits:
           # Limit is the maximun resource the container can have.
           # number of cores this container can use (can be 0.5 means half core)
-          cpus: '4'
+          cpus: '6'
           # maximun RAM this container can use
-          memory: '16G'
+          memory: '45G'
         reservations:
           # Reserves is a minimun resource the container will always have.
           # cpus: '4'
