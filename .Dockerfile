@@ -31,15 +31,18 @@ RUN pip3 install pipenv
 
 # basic tools
 RUN apt install wget vim telnet iputils-ping -y
+RUN apt install cron git rsync sudo -y
+RUN /bin/bash -c -l 'crontab -u root -l; echo "0 * * * * /root/sync.sh" | crontab -u root -'
+
 
 COPY ./etc_host/passwd /etc/passwd
 COPY ./etc_host/group /etc/group
 COPY ./etc_host/shadow /etc/shadow
 
-RUN apt install sudo rsync -y
 # cert
 RUN apt install python3 python3-venv libaugeas0 -y
 RUN pip install certbot
+
 # COPY ./root/new-cert.sh /root/new-cert.sh
 # COPY ./root/start.sh /root/start.sh
 COPY ./root/jupyterhub_config.py /root/jupyterhub_config.py
