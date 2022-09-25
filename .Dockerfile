@@ -20,6 +20,7 @@ EXPOSE 80 443 8000
 RUN apt install python3 python3-pip python3-dev -y
 RUN apt install git -y
 RUN apt install curl -y
+RUN apt install htop
 
 RUN apt install npm -y
 RUN npm install -g configurable-http-proxy
@@ -28,6 +29,7 @@ RUN pip3 install jupyter_server
 RUN pip3 install jupyterlab
 RUN pip3 install jupyterhub
 RUN pip3 install pipenv
+RUN pip3 install torchtest
 
 # basic tools
 RUN apt install wget vim telnet iputils-ping -y

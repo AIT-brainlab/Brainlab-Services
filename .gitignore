@@ -5,3 +5,4 @@
 !.keeps
 !jupyterhub_config.py
 !new-cert.sh
+!cuda-test.py
