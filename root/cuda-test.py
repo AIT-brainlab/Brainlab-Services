@@ -6,7 +6,7 @@ from torch.autograd import Variable
 
 from torchtest import test_suite
 
-device='cuda:0'
+device='cuda:1'
 
 inputs = Variable(torch.randn(20, 20))
 targets = Variable(torch.randint(0, 2, (20,))).long()
