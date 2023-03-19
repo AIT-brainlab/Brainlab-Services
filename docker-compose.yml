@@ -11,8 +11,10 @@ services:
       - ./home:/home
       - ./etc_host:/etc_host
       - ./cert:/cert
+    shm_size: '48gb'
     ports:
-      - 8000:8000
+      # host:container
+      - 8000:22
       - 80:80
       - 443:443
     environment:
@@ -25,12 +27,11 @@ services:
           # number of cores this container can use (can be 0.5 means half core)
           cpus: '6'
           # maximun RAM this container can use
-          memory: '45G'
+          memory: '120G'
         reservations:
           # Reserves is a minimun resource the container will always have.
           # cpus: '4'
           # memory: '4G'
           devices:
             - driver: nvidia
-              # count: 1
               capabilities: [gpu]

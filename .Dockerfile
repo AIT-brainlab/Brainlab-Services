@@ -15,12 +15,12 @@ RUN apt update && apt upgrade -y
 RUN apt install -y tzdata
 RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
 
-EXPOSE 80 443 8000
+EXPOSE 22 80 443 8000
 
 RUN apt install python3 python3-pip python3-dev -y
 RUN apt install git -y
 RUN apt install curl -y
-RUN apt install htop
+RUN apt install htop -y
 
 RUN apt install npm -y
 RUN npm install -g configurable-http-proxy
@@ -30,6 +30,7 @@ RUN pip3 install jupyterlab
 RUN pip3 install jupyterhub
 RUN pip3 install pipenv
 RUN pip3 install torchtest
+
 
 # basic tools
 RUN apt install wget vim telnet iputils-ping -y
@@ -42,8 +43,14 @@ COPY ./etc_host/group /etc/group
 COPY ./etc_host/shadow /etc/shadow
 
 # cert
-RUN apt install python3 python3-venv libaugeas0 -y
+# RUN apt install python3 python3-venv libaugeas0 -y
+RUN apt install libaugeas0 -y
 RUN pip install certbot
+
+# SSH feature
+# RUN apt install openssh-server -y
+# RUN systemctl enable ssh --now
+# RUN systemctl start ssh
 
 # COPY ./root/new-cert.sh /root/new-cert.sh
 # COPY ./root/start.sh /root/start.sh
