@@ -34,4 +34,8 @@ services:
           # memory: '4G'
           devices:
             - driver: nvidia
+<<<<<<< HEAD
+=======
+              # count: 1
+>>>>>>> 34ac3baaffe9187dfe14d57d6d4d555ee3ac65d2
               capabilities: [gpu]
