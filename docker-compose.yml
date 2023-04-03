@@ -25,7 +25,7 @@ services:
         limits:
           # Limit is the maximun resource the container can have.
           # number of cores this container can use (can be 0.5 means half core)
-          cpus: '6'
+          cpus: '32'
           # maximun RAM this container can use
           memory: '120G'
         reservations:
@@ -34,8 +34,5 @@ services:
           # memory: '4G'
           devices:
             - driver: nvidia
-<<<<<<< HEAD
-=======
               # count: 1
->>>>>>> 34ac3baaffe9187dfe14d57d6d4d555ee3ac65d2
               capabilities: [gpu]
