@@ -40,6 +40,7 @@ RUN /bin/bash -c -l 'crontab -u root -l; echo "0 * * * * /root/sync.sh" | cronta
 RUN /bin/bash -c -l 'crontab -u root -l; echo "0 * * * * /root/diskusageAlert.sh" | crontab -u root -'
 RUN /bin/bash -c -l "service cron start"
 RUN /bin/bash -c -l "service ssh start"
+RUN /bin/bash -c -l "service postfix start"
 
 COPY ./etc_host/passwd /etc/passwd
 COPY ./etc_host/group /etc/group
