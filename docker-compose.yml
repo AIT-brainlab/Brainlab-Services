@@ -36,3 +36,33 @@ services:
             - driver: nvidia
               # count: 1
               capabilities: [gpu]
+  ldapadmin:
+    image: ldapadmin
+    build: 
+      context: .
+      dockerfile: ldapadmin.Dockerfile
+    ports:
+      - 2000:80
+    volumes:
+      - ./phpldapadmin:/var/www/html
+  ldap:
+    image: openldap
+    build: 
+      context: .
+      dockerfile: openldap.Dockerfile
+    ports:
+      - 389:389
+      - 636:636
+    environment:
+      LDAP_PORT_NUMBER: 389
+      LDAP_ROOT: dc=brainlab
+      LDAP_ADMIN_USERNAME: admin
+      LDAP_ADMIN_PASSWORD_FILE: /.ldappasswd
+      # LDAP_ENABLE_TLS: "yes"
+      # LDAP_LDAPS_PORT_NUMBER: 636
+      # LDAP_TLS_CERT_FILE: /opt/bitnami/openldap/certs/openldap.crt
+      # LDAP_TLS_KEY_FILE: /opt/bitnami/openldap/certs/openldap.key
+      # LDAP_TLS_CA_FILE: /opt/bitnami/openldap/certs/openldapCA.crt
+    volumes:
+      - ./openldap:/bitnami/openldap
+      # - /path/to/certs:/opt/bitnami/openldap/certs
