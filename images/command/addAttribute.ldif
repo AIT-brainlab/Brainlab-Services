@@ -1,0 +1,9 @@
+dn: cn={4}brainlab,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: {4}brainlab
+olcAttributeTypes: ( 2.25.128424792425578037463837247958458780603.1 NAME 'jupyterSshPort' DESC 'For specifying SSH port for mapping during Docker Spawner' EQUALITY integerMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+
+dn: cn={4}brainlab,cn=schema,cn=config
+changetype: modify
+add: olcObjectClasses
+olcObjectClasses: ( 2.25.128424792425578037463837247958458780603.3 NAME 'brainlabAttrs' DESC 'Brainlab custom attribute' AUXILIARY MAY jupyterSshPort )

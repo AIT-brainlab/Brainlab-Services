@@ -1,0 +1,1 @@
+docker build . -f default.Dockerfile -t default

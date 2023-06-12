@@ -1,0 +1,39 @@
+ldapmodify -x -W -D "cn=admin,dc=ldap,dc=brainlab"
+
+dn: uid=[username],ou=people,dc=ldap,dc=brainlab
+changetype: modify
+replace: uidNumber
+uidNumber: [unix_idnumber]
+
+=======
+
+dn: uid=[username],ou=people,dc=ldap,dc=brainlab
+changetype: modify
+add: objectClass
+objectClass: brainlabAttrs
+-
+add: jupyterSshPort
+jupyterSshPort: [ssh_port]
+
+=====
+
+ldapadd -x -W -D "cn=admin,dc=ldap,dc=brainlab"
+
+dn: uid=[username],ou=people,dc=ldap,dc=brainlab
+objectClass: posixAccount
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: brainlabAttrs
+loginShell: /bin/bash
+homeDirectory: /mnt/HDD/home/[username]
+gidNumber: 10001
+uid: [username]
+cn: [Fullname]
+# default password: 1234
+userPassword:: e1NTSEF9V3JKNTNOOTBwYTMzZkdML2JHTnpXTHRvSVZOaE1HcFE=
+uidNumber: [stid]
+sn: [Lastname]
+givenName: [Firstname]
+jupyterSshPort: [ssh_port]
+mail: [stid]@ait.asia
