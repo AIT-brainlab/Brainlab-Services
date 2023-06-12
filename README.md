@@ -2,20 +2,24 @@ This Repository store knowledge, step, guide, and reference of AIT Brainlab Jupy
 
 Our current implementation (as of this commit) uses `Jupyterhub` with `dockerspawner` to spawner Docker container. The authentication is done with the `openLDAP`. And, user's work is stored via `NAS`.
 
-This document is separate the knowledge for those who want to replicate the work we have done (admin) and for those who want to use the system (user).
+This document is for those who want to use the system (user). Please read [README_admin.md](README_admin.md) if you want to replicate this work (admin).
 
 - [Topology](#topology)
 - [For Jupyterhub User](#for-jupyterhub-user)
-  - [Eligibility](#eligibility)
-  - [Get a credential](#get-a-credential)
-  - [The first thing to do once the credential is received](#the-first-thing-to-do-once-the-credential-is-received)
-  - [Accessing Jupyterhub](#accessing-jupyterhub)
-  - [SSH to servers](#ssh-to-servers)
-    - [Bob's case (intranet)](#bobs-case-intranet)
-    - [Alice's case (Internet)](#alices-case-internet)
-    - [SSH to containers](#ssh-to-containers)
-    - [Passwordless SSH to Servers/Containers](#passwordless-ssh-to-serverscontainers)
-- [For Jupyterhub Admin](#for-jupyterhub-admin)
+- [Eligibility](#eligibility)
+- [Get a credential](#get-a-credential)
+- [The first thing to do once the credential is received](#the-first-thing-to-do-once-the-credential-is-received)
+- [Accessing Jupyterhub](#accessing-jupyterhub)
+- [SSH to servers](#ssh-to-servers)
+  - [Bob's case (intranet)](#bobs-case-intranet)
+  - [Alice's case (Internet)](#alices-case-internet)
+- [SSH to containers](#ssh-to-containers)
+- [Passwordless SSH to Servers/Containers](#passwordless-ssh-to-serverscontainers)
+  - [1. Create a public/private key](#1-create-a-publicprivate-key)
+  - [2. Give the public key to the server](#2-give-the-public-key-to-the-server)
+  - [3. SSH to the server with the private key authentication option](#3-ssh-to-the-server-with-the-private-key-authentication-option)
+  - [4. (optional) Create `config` in `/.ssh` of your machine. So you don't have to remember the long command.](#4-optional-create-config-in-ssh-of-your-machine-so-you-dont-have-to-remember-the-long-command)
+- [Customizing Docker image](#customizing-docker-image)
 
 # Topology
   
@@ -35,15 +39,15 @@ This implementation provides the benefits we are seeking for.
 
 # For Jupyterhub User
 
-## Eligibility
+# Eligibility
 
 If you are a member of AIT Brainlab, you are eligible.
 
-## Get a credential
+# Get a credential
 
 Please contact the system admin for a credential.
 
-## The first thing to do once the credential is received
+# The first thing to do once the credential is received
 
 You should SSH to `Cairo` (Read [SSH to servers](#ssh-to-servers)). By login to `Cairo`, the system creates your `home` directory. Then, you should create your `/work` and `/.ssh` now.
 
@@ -61,12 +65,12 @@ While you are here, you should reset your password too.
 passwd
 ```
 
-## Accessing Jupyterhub
+# Accessing Jupyterhub
 
 `Jupyterhub` is served in both [`LA`](https://la.cs.ait.ac.th) and  [`Tokyo`](https://tokyo.cs.ait.ac.th). 
 
 
-## SSH to servers
+# SSH to servers
 
 > **Basic Networking**
 >
@@ -78,7 +82,7 @@ passwd
 
 There are two scenarios. From the image above, we have `Alice` and `Bob`. `Alice` is outside of the CSIM building, hence `Alice` is accessing the CSIM network through the internet. `Bob` works at the CSIM building, hence `Bob` accessing the services within the intranet.
 
-### Bob's case (intranet)
+## Bob's case (intranet)
 
 Since there is no firewall in the intranet, `Bob` can `SSH` to any servers directly. Here is the command.
 
@@ -97,7 +101,7 @@ server's names are
 >
 > When you are in the CSIM network, you can use alias name instead of full server name. For instance, you can use `la` instead of `la.cs.ait.ac.th`.
 
-### Alice's case (Internet)
+## Alice's case (Internet)
 
 Unlike `Bob`, `Alice` can not access servers directly. The only way `Alice` can access the server is through the `bazooka` server. Essentially, `Alice` has to SSH to the `bazooka` first, then SSH to other servers.
 
@@ -131,9 +135,9 @@ ssh -tt <stid>@bazooka.cs.ait.ac.th ssh -tt <username>@<serve_rname>
 # Login with Brainlab Account
 ```
 
-If you hate to type password, you have to use public/private key authentication.
+If you hate to type a password, you have to use public/private key authentication.
 
-### SSH to containers
+# SSH to containers
 
 You have to read [SSH to servers](#ssh-to-servers) first.
 
@@ -149,8 +153,153 @@ Therefore, you have to specify a port number when you are SSH to `Tokyo` otherwi
 
 However, there is no password inside the container (when you use `sudo`, it just runs without asking for a password). Thus, the only way to SSH to containers is you need to do public/private key authentication.
 
-### Passwordless SSH to Servers/Containers
+# Passwordless SSH to Servers/Containers
 
+I trick you to read a bunch of text. Actually, this is all you need to SSH to servers or containers. However, the knowledge won't go to waste. 
 
+These are the steps to do
+1. Create a public/private key.
+2. Give the public key to the server.
+3. SSH to the server with the private key authentication option
+4. (optional) Create `config` in `/.ssh` of your machine. So you don't have to remember the long command.
 
-# For Jupyterhub Admin
+##  1. Create a public/private key 
+
+[ref](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+
+1. Open `cmd`, `PowerShell`, or `terminal`
+2. Issue `ssh-keygen` command.
+```
+ssh-keygen -t rsa -b 4096 -C "<label>" -f "<path/to/save/file/keyname>"
+```
+- `<label>`: This will be added at the end of your public key
+- `<path/to/save/file/keyname>`: Provide a full path of your output file. For instance, if you want the file to be saved in your `home` directory, inside `.ssh` folder, and name the file `my_key`, you put `~/.ssh/my_key`
+3. You will be prompted with 
+```
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+This is the passphrase (or password) of your `private key`. Every time you use the key, you have to specify the passphrase. If you hate to type a passphrase, you have two options.
+(1) Don't use a passphrase. Anyone with your private key can just use it.
+(2) Cache the passphrase with SSH-Agent. You will only type the passphrase once for one terminal session. [ref](https://askubuntu.com/questions/362280/enter-ssh-passphrase-once).
+
+4. If the generation is successful, there will be a bunch of text printing. Your public key and private key should be in `path/to/save/file/keyname` (private key) and `path/to/save/file/keyname.pub` (public key)
+
+We treat keys like passwords. If you are lazy, you use one pair (public/private) for all servers. If you are secured, you create one pair for one server.
+
+## 2. Give the public key to the server
+
+Let's set the `bazooka` first.
+
+1. Copy your public key to `bazooka`
+```sh
+scp path/to/save/file/keyname.pub <stid>@bazooka.cs.ait.ac.th:~
+```
+2. SSH to `bazooka`
+3. Check if you have `.ssh` folder yet. If not, create one.
+```sh
+mkdir ~/.ssh
+chmod 700 ~/.ssh
+```
+4. Create `authorized_keys` in `.ssh` folder. Of cause, only if you don't have one.
+```sh
+touch ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+5. Copy the content of your public key to `authorized_keys`
+```sh
+cat ~/keyname.pub >> ~/.ssh/authorized_keys
+```
+6. You can delete the public key or leave it. Up to you.
+```sh
+# To delete public key
+rm ~/keyname.pub
+```
+
+## 3. SSH to the server with the private key authentication option
+
+Go back to your machine. (If you are still SSH in `bazooka` use `exit` to leave the session)
+
+From your machine, use `-i` to use public/private key authentication.
+```
+ssh -i path/to/save/file/keyname <stid>@bazooka.cs.ait.ac.th
+```
+
+You should just SSH to `bazooka` without using the CSIM password.
+
+## 4. (optional) Create `config` in `/.ssh` of your machine. So you don't have to remember the long command.
+
+Now, we will create a `config` file for the ultimate convenience (because we are too lazy to type).
+
+1. create `config` file in your `~/.ssh`.
+```sh
+# For MacOS and Linux
+touch ~/.ssh/config
+# For Windows user. Open the folder and create the file yourself.
+explorer C:\Users\<PC_username>\.ssh
+```
+2. Edit the `config` with the following configuration. [ref](https://www.howtogeek.com/devops/how-to-manage-an-ssh-config-file-in-windows-linux/)
+```
+Host bazooka
+  HostName bazooka.cs.ait.ac.th
+  Port 22
+  User <student_id>
+	IdentityFile <path/to/save/file/keyname>
+	IdentitiesOnly yes
+```
+Save the file.
+3. Try to SSH with the new nickname
+```sh
+ssh bazooka
+```
+
+-----
+
+Now, let's discuss how can you SSH to your containers.
+Since our lab uses `NAS` and your container map `.ssh` from your `home` into its, your `.ssh` is shared in all Brainlab servers including the container. Thus, all you need to do is to make sure you can use your private key to SSH to `Cairo`. Then, with the same private key, you can SSH to any of the Brainlab servers and containers.
+
+1. SSH to `Cairo`
+2. Create `authorzied_keys` inside the `.ssh` folder.
+3. Copy your public key to the `authorzied_keys`.
+4. Try SSH to `Cairo` again. This should work first.
+5. Add the config so we don't need to remember the long command
+```
+Host cairo
+  HostName cairo.cs.ait.ac.th
+  ProxyJump bazooka
+  User <brainlab_username>
+  Port 22
+  ForwardAgent yes
+  IdentitiesOnly yes
+  IdentityFile <path/to/save/file/keyname>
+  ServerAliveInterval 60
+```
+6. Try SSH with the nickname.
+```sh
+ssh cairo
+```
+7. To do this for a container in `LA`, add this to `~/.ssh/config`.
+```
+Host la_container
+  HostName la.cs.ait.ac.th
+  ProxyJump bazooka
+  User <brainlab_username>
+  Port <Container SSH port>
+  ForwardAgent yes
+  IdentitiesOnly yes
+  IdentityFile <path/to/save/file/keyname>
+  ServerAliveInterval 60
+```
+If you don't know your Container SSH port, read [SSH to Containers](#ssh-to-containers)
+1. Start a container inside the `LA` server.
+2. Try SSH to the container.
+```sh
+ssh la_container
+```
+
+Enjoy Developing!!
+
+# Customizing Docker image
+
+[TODO]
