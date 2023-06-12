@@ -289,6 +289,7 @@ Host la_container
   ServerAliveInterval 60
 ```
 If you don't know your Container SSH port, read [SSH to Containers](#ssh-to-containers)
+
 8. Start a container inside the `LA` server.
 9. Try SSH to the container.
 ```sh
