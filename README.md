@@ -138,7 +138,7 @@ If you hate to type a password, you have to use public/private key authenticatio
 
 You have to read [SSH to servers](#ssh-to-servers) first.
 
-Let's assume that you have spawned your container in `Tokyo`. At this point, the container SSH port is the last 5 digits of your student id. For instance, if the student id is st123456, the SSH port is `23456`. In addition, other students are also working in `Tokyo` too. Their student is might be st120001 and st120002 so the ports are `20001` and `20002`.
+Let's assume that you have spawned your container in `Tokyo`. At this point, the container SSH port is the last 5 digits of your student id. For instance, if the student id is st123456, the SSH port is `23456`. In addition, other students are also working in `Tokyo` too. Their student id might be st120001 and st120002 so the ports are `20001` and `20002`.
 
 At this point, the `Tokyo` SSH ports are the following
 - 22 (default) - SSH to `Tokyo`
