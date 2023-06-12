@@ -143,7 +143,7 @@ Let's assume that you have spawned your container in `Tokyo`. At this point, the
 At this point, the `Tokyo` SSH ports are the following
 - 22 (default) - SSH to `Tokyo`
 - 20001 (student A) - SSH to the container of student A
-- 20002 (student B) - SSH to the container of student A
+- 20002 (student B) - SSH to the container of student B
 - 23456 (you) - SSH to your container
 
 Therefore, you have to specify a port number when you are SSH to `Tokyo` otherwise the default `22` is used (which you will end up in `Tokyo` server instead).
