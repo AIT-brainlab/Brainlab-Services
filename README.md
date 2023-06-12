@@ -5,7 +5,6 @@ Our current implementation (as of this commit) uses `Jupyterhub` with `dockerspa
 This document is for those who want to use the system (user). Please read [README_admin.md](README_admin.md) if you want to replicate this work (admin).
 
 - [Topology](#topology)
-- [For Jupyterhub User](#for-jupyterhub-user)
 - [Eligibility](#eligibility)
 - [Get a credential](#get-a-credential)
 - [The first thing to do once the credential is received](#the-first-thing-to-do-once-the-credential-is-received)
@@ -36,8 +35,6 @@ This implementation provides the benefits we are seeking for.
 2. Each user is isolated from the other.
 3. We can give them `sudo` privilege under their container.
 4. Works are stored in `NAS`. Thus, `Jupyter` service has redundancy. 
-
-# For Jupyterhub User
 
 # Eligibility
 
