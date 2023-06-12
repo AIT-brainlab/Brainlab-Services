@@ -1,0 +1,17 @@
+# ln -s /root/projects/jupyter/systemd/jupyterhub.service /etc/systemd/system/jupyterhub.service
+# systemctl daemon-reload
+# systemctl enable jupyterhub.service
+# systemctl start jupyterhub.service
+
+[Unit]
+Description=JupyterHub
+After=syslog.target network.target
+
+[Service]
+User=root
+Environment="PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/projects/jupyter/"
+Environment=JUPYTERHUB_CRYPT_KEY=810ee30a3d4ad40049118a168c0945cd4cb60039b649466e258fe9b2c0628c38
+ExecStart=/usr/local/bin/jupyterhub -f /root/projects/jupyter/jupyterhub_config.py
+
+[Install]
+WantedBy=multi-user.target
