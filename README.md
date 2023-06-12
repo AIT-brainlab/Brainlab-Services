@@ -239,14 +239,14 @@ explorer C:\Users\<PC_username>\.ssh
 2. Edit the `config` with the following configuration. [ref](https://www.howtogeek.com/devops/how-to-manage-an-ssh-config-file-in-windows-linux/)
 ```
 Host bazooka
-  HostName bazooka.cs.ait.ac.th
-  Port 22
-  User <student_id>
-	IdentityFile <path/to/save/file/keyname>
-	IdentitiesOnly yes
+   HostName bazooka.cs.ait.ac.th
+   Port 22
+   User <student_id>
+   IdentityFile <path/to/save/file/keyname>
+   IdentitiesOnly yes
 ```
 Save the file.
-3. Try to SSH with the new nickname
+1. Try to SSH with the new nickname
 ```sh
 ssh bazooka
 ```
