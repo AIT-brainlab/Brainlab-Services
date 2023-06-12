@@ -1,77 +1,212 @@
-# docker-jupyterhub
- 
-Set up the new machine.
+This is the current implementation of Jupyterhub of the AIT Brainlab.
+Below is the step to install a new machine.
 
-Once you have install your Ubuntu here is what to do next (tested on Ubuntu 22.04)
+# A step to install Ubuntu 22.04 for AIT Brainlab system
 
-## Control Docker on vscode
+- [A step to install Ubuntu 22.04 for AIT Brainlab system](#a-step-to-install-ubuntu-2204-for-ait-brainlab-system)
+  - [1. Install Ubuntu 22.04 on the machine](#1-install-ubuntu-2204-on-the-machine)
+  - [2. Configuring IP address, proxy, and /etc/hosts](#2-configuring-ip-address-proxy-and-etchosts)
+    - [2-1. Configuring NTP](#2-1-configuring-ntp)
+  - [3. Set Proxy for APT, update, and upgrade](#3-set-proxy-for-apt-update-and-upgrade)
+  - [4. Set locale](#4-set-locale)
+  - [5. Install Nvidia driver via `Software & Updates` app](#5-install-nvidia-driver-via-software--updates-app)
+  - [6. Configuring NAS for `home`](#6-configuring-nas-for-home)
+  - [7. Connect to LDAP](#7-connect-to-ldap)
+  - [8. Install Docker](#8-install-docker)
+  - [9. Configuring Docker with Proxy](#9-configuring-docker-with-proxy)
+  - [10. Set rootless mode](#10-set-rootless-mode)
+  - [11. Install Nvidia Container Toolkit](#11-install-nvidia-container-toolkit)
+- [12. Install Python](#12-install-python)
+  - [13. Set up Jupyterhub](#13-set-up-jupyterhub)
+  - [14. Set DockerSpawner](#14-set-dockerspawner)
+  - [15. Set Ldap Authentication](#15-set-ldap-authentication)
+  - [16. add runtime nvidia](#16-add-runtime-nvidia)
+  - [17. register jupyterhub service to systemd](#17-register-jupyterhub-service-to-systemd)
 
-Do rootless
 
-1. Enable hardware management with `cgroup v2`
-2. Allow to map any port by add this `net.ipv4.ip_unprivileged_port_start=0` to `etc/sysctl.conf`
-3. map GPU with Nvidia-ctk
-    - https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/nvidia-docker.html
-    - Set `no-cgroups = true` under `[nvidia-container-cli]` in `/etc/nvidia-container-runtime`.
+## 1. Install Ubuntu 22.04 on the machine
+## 2. Configuring IP address, proxy, and /etc/hosts
+### 2-1. Configuring NTP
+https://ubuntu.com/server/docs/network-ntp
 
-Usually, restart your pc and it should be ok.
-
-
-## Enable cgroup v2 for hardware management
-
-https://rootlesscontaine.rs/getting-started/common/cgroup2/
-
-Enabling cgroup v2 is often needed for running Rootless Containers with limiting the consumption of the CPU, memory, I/O, and PIDs resources,
-e.g. `docker run --memory 32m`.
-
-Note that cgroup is not needed for just limiting resources with traditional ulimit and [cpulimit](https://github.com/opsengine/cpulimit),
-though they work in process-granularity rather than in container-granularity.
-See [here](https://docs.docker.com/engine/security/rootless/#limiting-resources) for the further information.
-
-### Checking whether cgroup v2 is already enabled
-
-If `/sys/fs/cgroup/cgroup.controllers` is present on your system, you are using v2, otherwise you are using v1.
-
-The following distributions are known to use cgroup v2 by default:
-- Fedora (since 31)
-- Arch Linux (since April 2021)
-- openSUSE Tumbleweed (since c. 2021)
-- Debian GNU/Linux (since 11)
-- Ubuntu (since 21.10)
-- RHEL and RHEL-like distributions (since 9)
-
-### Enabling cgroup v2
-
-Enabling cgroup v2 for containers requires kernel 4.15 or later. Kernel 5.2 or later is recommended.
-
-And yet, delegating cgroup v2 controllers to non-root users requires a recent version of systemd. systemd 244 or later is recommended.
-
-To boot the host with cgroup v2, add the following string to the `GRUB_CMDLINE_LINUX` line in `/etc/default/grub` and then run `sudo update-grub`.
+The NTP domain of CSIM is `ntp.cs.ait.ac.th`.
+Thus add the following configuration to `/etc/systemd/timesyncd.conf`
+```sh
+[Time]
+NTP=ntp.cs.ait.ac.th
+FallbackNTP=ntp.ubuntu.com
+RootDistanceMaxSec=5
+PollIntervalMinSec=32
+PollIntervalMaxSec=2048
 ```
-systemd.unified_cgroup_hierarchy=1
+Use `timedatectl` to check the active configuration and `systemctl restart systemd-timesyncd.service` to restart the service.
+
+## 3. Set Proxy for APT, update, and upgrade
+https://www.howtoforge.com/how-to-setup-apt-proxy-on-ubuntu/
+## 4. Set locale
+```sh
+sudo update-locale LC_TIME=en_US.UTF-8
 ```
-For ubuntu on azure, you should add this in `/etc/default/grub.d/50-cloudimg-settings.cfg`
-
-### Enabling CPU, CPUSET, and I/O delegation
-
-By default, a non-root user can only get `memory` controller and `pids` controller to be delegated.
-```console
-$ cat /sys/fs/cgroup/user.slice/user-$(id -u).slice/user@$(id -u).service/cgroup.controllers
-memory pids
+## 5. Install Nvidia driver via `Software & Updates` app
+## 6. Configuring NAS for `home`
+```shell
+sudo apt install -y nfs-common
+sudo mkdir -p /mnt/HDD/home
+```
+add mount command to `/etc/fstab`
+```shell
+cairo:/mnt/HDD/home     /mnt/HDD/home   nfs     auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
+```
+Then try to mount with
+```
+sudo mount -a
 ```
 
-To allow delegation of other controllers such as `cpu`, `cpuset`, and `io`, run the following commands:
+## 7. Connect to LDAP
+https://bobcares.com/blog/configure-ldap-client-ubuntu/
 
-```console
-$ sudo mkdir -p /etc/systemd/system/user@.service.d
-$ cat <<EOF | sudo tee /etc/systemd/system/user@.service.d/delegate.conf
+In `/etc/pam.d/common-password`, use the following config.
+
+```sh
+password        requisite                       pam_pwquality.so retry=3
+password        [success=1 default=ignore]      pam_ldap.so use_authtok ignore_unknown_user ignore_authinfo_unavail no_warn minimum_uid=1000
+password        requisite                       pam_deny.so
+password        required                        pam_permit.so
+password        optional                        pam_gnome_keyring.so
+```
+This will allow the local machine to reset the LDAP password
+
+## 8. Install Docker
+
+Install from the script.
+
+```sh
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+```
+
+##  9. Configuring Docker with Proxy
+https://docs.docker.com/config/daemon/systemd/
+
+##  10. Set rootless mode
+https://docs.docker.com/engine/security/rootless/
+
+- https://docs.docker.com/engine/security/rootless/#exposing-privileged-ports
+- https://docs.docker.com/engine/security/rootless/#limiting-resources
+
+## 11. Install Nvidia Container Toolkit
+https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+
+```sh
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+      && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+      && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+            sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+            sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+```
+
+```sh
+sudo apt-get update
+sudo apt-get install -y nvidia-container-toolkit
+sudo systemctl restart docker
+systemctl --user restart docker.service
+```
+
+# 12. Install Python
+
+```sh
+sudo apt install -y python3 python3-pip
+```
+
+## 13. Set up Jupyterhub
+https://jupyterhub.readthedocs.io/en/stable/tutorial/quickstart.html
+
+```sh
+sudo apt install -y nodejs npm
+sudo pip3 install jupyterhub
+sudo npm install -g configurable-http-proxy
+sudo pip3 install jupyterlab notebook 
+```
+
+## 14. Set DockerSpawner
+
+```sh
+sudo pip3 install dockerspawner
+```
+
+## 15. Set Ldap Authentication
+
+```sh
+sudo pip3 install jupyterhub-ldapauthenticator
+```
+
+Modify the package to fix TLS errors when authentication
+
+```sh
+cd /usr/local/lib/python3.10/dist-packages/ldapauthenticator
+sudo vim ldapauthenticator.py
+# line 312
+# ldap3.AUTO_BIND_NO_TLS if self.use_ssl else ldap3.AUTO_BIND_TLS_BEFORE_BIND
+ldap3.AUTO_BIND_NO_TLS if not self.use_ssl else ldap3.AUTO_BIND_TLS_BEFORE_BIND
+```
+
+## 16. add runtime nvidia
+https://hackmd.io/@DanielChen/Sy81P-Aw4?type=viewe
+
+```sh
+sudo vim /etc/docker/daemon.json
+
+{
+        "data-root": "/data/docker",
+        "runtimes": {
+                "nvidia": {
+                        "path": "nvidia-container-runtime",
+                        "runtimeArgs": []
+                }
+        }
+}
+```
+
+##  17. register jupyterhub service to systemd
+
+https://medium.com/analytics-vidhya/auto-start-jupyter-lab-on-machine-boot-e4f6b3296034
+
+create a systemd file
+```sh
+sudo vim jupyterhub.service
+
+[Unit]
+Description=JupyterHub
+Wants=network-online.target
+After=syslog.target network.target network-online.target
+
 [Service]
-Delegate=cpu cpuset io memory pids
-EOF
-$ sudo systemctl daemon-reload
+User=root
+Environment="PATH=/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/projects/jupyter/"
+# use this `openssl rand -hex 32` to obtain key
+Environment=JUPYTERHUB_CRYPT_KEY=
+ExecStart=/usr/local/bin/jupyterhub -f /root/projects/jupyter/jupyterhub_config.py
+
+[Install]
+WantedBy=multi-user.target
 ```
 
-Delegating `cpuset` is recommended as well as `cpu`. Delegating `cpuset` requires systemd 244 or later.
+symlink the file to systemd
+```sh
+sudo ln -s /root/projects/jupyter/systemd/jupyterhub.service  /etc/systemd/system/jupyterhub.service
+```
 
-After changing the systemd configuration, you need to re-login or reboot the host.
-Rebooting the host is recommended.
+reload systemctl
+```sh
+sudo systemctl daemon-reload
+```
+
+Try start the service
+```sh
+sudo systemctl start jupyterhub.service
+```
+
+Enable auto boot
+```sh
+sudo systemctl enable jupyterhub.service
+```

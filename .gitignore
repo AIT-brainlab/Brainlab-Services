@@ -1,13 +1,1 @@
-/home/*
-/etc_host/*
-/root/*
-/cert/*
-/openldap/*
-.ldappasswd
-/phpldapadmin/*
-
 !.keeps
-!jupyterhub_config.py
-!cuda-test.py
-!*.sh
-!.bashrc
