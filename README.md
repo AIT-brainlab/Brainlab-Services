@@ -260,7 +260,7 @@ Since our lab uses `NAS` and your container map `.ssh` from your `home` into its
 2. Create `authorzied_keys` inside the `.ssh` folder.
 3. Copy your public key to the `authorzied_keys`.
 4. Try SSH to `Cairo` again. This should work first.
-5. Add the config so we don't need to remember the long command
+5. Add the `config` so we don't need to remember the long command
 ```
 Host cairo
   HostName cairo.cs.ait.ac.th
@@ -289,11 +289,13 @@ Host la_container
   ServerAliveInterval 60
 ```
 If you don't know your Container SSH port, read [SSH to Containers](#ssh-to-containers)
-1. Start a container inside the `LA` server.
-2. Try SSH to the container.
+8. Start a container inside the `LA` server.
+9. Try SSH to the container.
 ```sh
 ssh la_container
 ```
+
+At this point, you can use `Remote - SSH` feature in `VScode` and develop from the `VScode` if you are desired.
 
 Enjoy Developing!!
 
