@@ -246,7 +246,8 @@ Host bazooka
    IdentitiesOnly yes
 ```
 Save the file.
-1. Try to SSH with the new nickname
+
+3. Try to SSH with the new nickname
 ```sh
 ssh bazooka
 ```
