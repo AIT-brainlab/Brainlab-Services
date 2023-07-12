@@ -2,6 +2,8 @@ This Repository store knowledge, step, guide, and reference of AIT Brainlab Jupy
 
 Our current implementation (as of this commit) uses `Jupyterhub` with `dockerspawner` to spawner Docker container. The authentication is done with the `openLDAP`. And, user's work is stored via `NAS`.
 
+All the information can be found in the [wiki](https://github.com/AIT-brainlab/docker-jupyterhub/wiki)
+
 This document is for those who want to use the system (user). Please read [README_admin.md](README_admin.md) if you want to replicate this work (admin).
 
 - [Topology](#topology)
