@@ -22,6 +22,9 @@ c.JupyterHub.ssl_key = f"/etc/letsencrypt/live/{domain_name}/privkey.pem"
 c.JupyterHub.ip = '0.0.0.0'
 c.JupyterHub.port = 443
 c.JupyterHub.hub_ip = server_ip
+# Server won't restart when jupyterhub is gone
+c.JupyterHub.cleanup_servers = False
+
 c.Authenticator.admin_users = set({'admin'})
 c.Authenticator.enable_auth_state = True
 c.JupyterHub.authenticator_class = 'ldapauthenticator.LDAPAuthenticator'
@@ -31,6 +34,7 @@ c.LDAPAuthenticator.bind_dn_template = [
     "uid={username},ou=people,dc=ldap,dc=brainlab",
 ]
 c.LDAPAuthenticator.use_ssl = False
+
 
 import dockerspawner
 class DockerSpawner(dockerspawner.DockerSpawner):
