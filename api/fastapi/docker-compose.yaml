@@ -5,6 +5,10 @@ services:
     build:
       context: .
       dockerfile: .Dockerfile
+    # For development purpose, we map the entire `code` folder so it is convenient for development.
+    volumes:
+      - ./code:/root/code
+      - ./.vscode-server:/root/.vscode-server
     labels:
       - traefik.enable=true
       # Becareful!! api-fastapi here has to be changed.

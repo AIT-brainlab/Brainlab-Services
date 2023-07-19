@@ -1,1 +1,4 @@
+/api/fastapi/.vscode-server
+/api/fastapi/code/mlruns
+/api/fastapi/code/cache/*
 !.keeps
