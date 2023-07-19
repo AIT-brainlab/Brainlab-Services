@@ -1,4 +1,6 @@
 /api/fastapi/.vscode-server
 /api/fastapi/code/mlruns
-/api/fastapi/code/cache/*
+/api/fastapi/cache/*
+/api/fastapi/logs/*
+__pycache__
 !.keeps
