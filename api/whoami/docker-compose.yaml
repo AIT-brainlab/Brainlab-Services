@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  whoami:
+    # A container that exposes an API to show its IP address
+    image: traefik/whoami
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.whoami-whoami.loadbalancer.server.port=80
+    networks:
+      - default
+      - traefik_default
+
+networks:
+  default:
+  traefik_default:
+    external: true

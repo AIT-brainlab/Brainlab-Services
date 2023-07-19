@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  web:
+    image: httpd
+    labels:
+      - traefik.enable=true
+    networks:
+      - default
+      - traefik_default
+
+networks:
+  default:
+  traefik_default:
+    external: true

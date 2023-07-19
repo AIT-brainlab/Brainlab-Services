@@ -1,0 +1,27 @@
+version: "3.7"
+services:
+  api:
+    image: akraradets/brainlab-fastapi-example:latest
+    build:
+      context: .
+      dockerfile: .Dockerfile
+    labels:
+      - traefik.enable=true
+      # Becareful!! api-fastapi here has to be changed.
+      # Use <foldername>-<servicename>.
+      # The port is following the expose in .Dockerfile
+      - traefik.http.services.api-fastapi.loadbalancer.server.port=80
+    ports:
+      # We map the port 9000 from host to 80 in the container, so you can acess your api without traefik.
+      # If you already use 9000, just change to another port.
+      # This is for development only.
+      # In the production, this will be commented out.
+      - 9000:80
+    networks:
+      - default
+      - traefik_default
+
+networks:
+  default:
+  traefik_default:
+    external: true
