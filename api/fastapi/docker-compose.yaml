@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: .Dockerfile
-    # command: uvicorn main:app --host 0.0.0.0 --port 80 --reload
+    command: uvicorn main:main --host 0.0.0.0 --port 80 --reload
     # For development purpose, we map the entire `code` folder so it is convenient for development.
     volumes:
       - ./code:/root/code
@@ -19,11 +19,11 @@ services:
       # The port is following the expose in .Dockerfile
       - traefik.http.services.api-fastapi.loadbalancer.server.port=80
     ports:
-      # We map the port 9000 from host to 80 in the container, so you can acess your api without traefik.
+      # We map the port 9000 from host to 8080 in the container, so you can acess your api without traefik.
       # If you already use 9000, just change to another port.
       # This is for development only.
       # In the production, this will be commented out.
-      - 9000:80
+      - 9000:8080
     networks:
       - default
       - traefik_default

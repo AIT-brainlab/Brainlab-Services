@@ -2,6 +2,8 @@ version: "3.7"
 services:
   web:
     image: httpd
+    volumes:
+      - ./htdocs:/usr/local/apache2/htdocs
     labels:
       - traefik.enable=true
     networks:

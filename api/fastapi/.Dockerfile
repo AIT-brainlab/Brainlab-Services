@@ -13,6 +13,7 @@ RUN pip3 install --upgrade pip
 # Let's install the FastAPI first.
 RUN pip3 install fastapi==0.100.0
 RUN pip3 install "uvicorn[standard]==0.23.1"
+RUN pip3 install python-multipart==0.0.6
 
 # Now you build your environment here
 # Because I will fetch the model from mlflow, I will replicate the environment following what is specify in the requirements.txt
@@ -27,5 +28,8 @@ RUN pip3 install torch==2.0.1
 RUN pip3 install torchvision==0.15.2
 RUN pip3 install tqdm==4.65.0
 RUN pip3 install mlflow==2.4
+
+# For Dev purpose
+RUN pip3 install ipykernel
 
 CMD tail -f /dev/null
