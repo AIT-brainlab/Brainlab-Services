@@ -15,9 +15,12 @@ services:
     labels:
       - traefik.enable=true
       # Becareful!! api-fastapi here has to be changed.
-      # Use <foldername>-<servicename>.
+      # Use <servicename>-<foldername>.
       # The port is following the expose in .Dockerfile
       - traefik.http.services.api-fastapi.loadbalancer.server.port=80
+      # This is for SSL
+      # - traefik.http.routers.api-fastapi.tls=true
+      # - traefik.http.routers.api-fastapi.entrypoints=web-https
     ports:
       # We map the port 9000 from host to 8080 in the container, so you can acess your api without traefik.
       # If you already use 9000, just change to another port.

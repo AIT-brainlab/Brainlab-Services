@@ -6,6 +6,9 @@ services:
       - ./htdocs:/usr/local/apache2/htdocs
     labels:
       - traefik.enable=true
+      # Below is for enable SSL
+      # - traefik.http.routers.web-httpd.entrypoints=web-https
+      # - traefik.http.routers.web-httpd.tls=true
     networks:
       - default
       - traefik_default
