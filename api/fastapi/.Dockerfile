@@ -7,7 +7,9 @@ EXPOSE 80
 
 WORKDIR /root/code
 
-RUN pip3 install --upgrade pip
+RUN pip3 install pip==22.0.2
+RUN pip3 install setuptools==59.6.0
+RUN pip3 install wheel==0.37.1
 # Specify the version so every build is consistent
 
 # Let's install the FastAPI first.
@@ -32,4 +34,9 @@ RUN pip3 install mlflow==2.4
 # For Dev purpose
 RUN pip3 install ipykernel
 
+# When you are done, copy the entire code to image for packing the service
+# COPY ./code /root/code
+
+# This will keep the container running
 CMD tail -f /dev/null
+# CMD uvicorn main:main --host 0.0.0.0 --port 80 

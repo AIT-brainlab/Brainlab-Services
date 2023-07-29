@@ -12,8 +12,8 @@ providers:
     network: traefik_default # the network these API is used
     defaultRule: Host(`{{.Name}}.localhost`)
     endpoint: unix:///var/run/docker.sock
-  # file:
-  #   filename: /root/.config/tls.yaml # this is for SSL
+  file:
+    filename: /root/.config/tls.yaml # this is for SSL
 accessLog:
   filePath: /logs/access.log
 log:

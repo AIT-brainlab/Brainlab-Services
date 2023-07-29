@@ -25,7 +25,7 @@ services:
       # For logging
       - ./logs:/logs
       # For SSL
-      - /etc/letsencrypt/:/etc/letsencrypt/
+      # - /etc/letsencrypt/:/etc/letsencrypt/
     networks:
       - default
 

@@ -8,9 +8,10 @@ services:
     command: uvicorn main:main --host 0.0.0.0 --port 80 --reload
     # For development purpose, we map the entire `code` folder so it is convenient for development.
     volumes:
-      - ./code:/root/code
       - ./logs:/root/logs
       - ./cache:/root/cache
+      # These two is for development only
+      - ./code:/root/code
       - ./.vscode-server:/root/.vscode-server
     labels:
       - traefik.enable=true
@@ -20,7 +21,7 @@ services:
       - traefik.http.services.api-fastapi.loadbalancer.server.port=80
       # This is for SSL
       # - traefik.http.routers.api-fastapi.tls=true
-      # - traefik.http.routers.api-fastapi.entrypoints=web-https
+      # - traefik.http.routers.api-fastapi.entrypoints=entry-default
     ports:
       # We map the port 9000 from host to 8080 in the container, so you can acess your api without traefik.
       # If you already use 9000, just change to another port.

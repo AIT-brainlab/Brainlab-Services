@@ -7,8 +7,8 @@ services:
     labels:
       - traefik.enable=true
       # Below is for enable SSL
-      # - traefik.http.routers.web-httpd.entrypoints=web-https
       # - traefik.http.routers.web-httpd.tls=true
+      # - traefik.http.routers.web-httpd.entrypoints=entry-default
     networks:
       - default
       - traefik_default

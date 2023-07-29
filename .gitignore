@@ -2,5 +2,6 @@
 /api/fastapi/code/mlruns
 /api/fastapi/cache/*
 /api/fastapi/logs/*
+/api/traefik/logs/*
 __pycache__
 !.keeps
