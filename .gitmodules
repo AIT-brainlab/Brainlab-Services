@@ -1,0 +1,4 @@
+[submodule "api/gpt2detect"]
+	path = api/gpt2detect
+	url = https://github.com/AIT-brainlab/AI-Content-Detector.git
+	branch = main
