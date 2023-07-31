@@ -1,0 +1,42 @@
+version: "3.7"
+services:
+  web:
+    image: akraradets/aitgpt:1.0.0
+    build:
+      context: .
+      dockerfile: .Dockerfile
+    command: streamlit run app.py --server.port=80 --server.address=0.0.0.0
+    # For development purpose, we map the entire `code` folder so it is convenient for development.
+    volumes:
+      - ./logs:/root/logs
+      - ./cache:/root/cache
+      # These two is for development only
+      # - ./code:/root/code
+      # - ./.vscode-server:/root/.vscode-server
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.web-aitgpt.loadbalancer.server.port=80
+      # This is for SSL
+      # - traefik.http.routers.web-aitgpt.tls=true
+      # - traefik.http.routers.web-aitgpt.entrypoints=entry-default
+    # ports:
+      # We map the port 9000 from host to 8080 in the container, so you can acess your api without traefik.
+      # If you already use 9000, just change to another port.
+      # This is for development only.
+      # In the production, this will be commented out.
+      # - 9000:8080
+    networks:
+      - default
+      - traefik_default
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+networks:
+  default:
+  traefik_default:
+    external: true

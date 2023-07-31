@@ -1,7 +1,9 @@
-/api/fastapi/.vscode-server
-/api/fastapi/code/mlruns
-/api/fastapi/cache/*
-/api/fastapi/logs/*
-/api/traefik/logs/*
+/api/*/.vscode-server
+/api/*/code/mlruns
+/api/*/cache/*
+/api/*/logs/*
 __pycache__
 !.keeps
+
+# AITGPT secrete
+/api/aitgpt/code/.streamlit
