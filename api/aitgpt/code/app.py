@@ -76,7 +76,7 @@ def load_scraped_web_info():
 @st.cache_resource
 def load_embedding_model():
     embedding_model = HuggingFaceInstructEmbeddings(model_name='hkunlp/instructor-base',
-                                                    cache_folder='/root/cache',
+                                                    cache_folder='/root/.cache',
                                                 model_kwargs = {'device': torch.device('cuda' if torch.cuda.is_available() else 'cpu')})
     return embedding_model
 
@@ -86,34 +86,26 @@ def load_faiss_index():
     return vector_database
 
 @st.cache_resource
-def load_llm_model():
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    filename = "/root/cache/lmsys/fastchat-t5-3b-v1.0.gpu.pickle"
-    if(device == 'cpu'):
-        filename = "/root/cache/lmsys/fastchat-t5-3b-v1.0.cpu.pickle"
+def load_llm_model_cpu():
+    llm = HuggingFacePipeline.from_model_id(model_id= 'lmsys/fastchat-t5-3b-v1.0', 
+                            task= 'text2text-generation',        
+                            model_kwargs={ "max_length": 256, "temperature": 0,
+                                            "torch_dtype":torch.float32,
+                                        "repetition_penalty": 1.3})
 
-    llm = None
-    # if there is cache
-    if(os.path.exists(filename)):
-        with open(filename, "rb") as fp:
-            llm = pickle.load(fp)
-    else:
-        # No cache
-        if(device == 'cpu'):
-            llm = HuggingFacePipeline.from_model_id(model_id= 'lmsys/fastchat-t5-3b-v1.0', 
-                                    task= 'text2text-generation',        
-                                    model_kwargs={ "max_length": 256, "temperature": 0,
-                                                    "torch_dtype":torch.float32,
-                                                "repetition_penalty": 1.3})
-        else:
-            llm = HuggingFacePipeline.from_model_id(model_id= 'lmsys/fastchat-t5-3b-v1.0', 
-                                                    task= 'text2text-generation',
-                                                    model_kwargs={ "device_map": "auto",
-                                                                "load_in_8bit": True,"max_length": 256, "temperature": 0,
-                                                                "repetition_penalty": 1.5})
-        # save cache
-        with open(filename, 'wb') as handle:
-            pickle.dump(llm, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    return llm
+
+@st.cache_resource
+def load_llm_model_gpu(gpu_id:int ):
+    llm = HuggingFacePipeline.from_model_id(model_id= 'lmsys/fastchat-t5-3b-v1.0', 
+                                            task= 'text2text-generation',
+                                            device=gpu_id,
+                                            model_kwargs={ "device_map": "auto",
+                                                        # "load_in_8bit": True,
+                                                        "max_length": 256, 
+                                                        "temperature": 0,
+                                                        "repetition_penalty": 1.5},
+                                            )
 
     return llm
 
@@ -246,7 +238,16 @@ datetime_format= "%Y-%m-%d %H:%M:%S"
 load_scraped_web_info()
 embedding_model = load_embedding_model()
 vector_database = load_faiss_index()
-llm_model = load_llm_model()
+
+enable_gpu = int(os.environ['enable_gpu'])
+gpu_id = int(os.environ['gpu_id'])
+llm_model = None
+if(enable_gpu == 1):
+    print(f"{enable_gpu=} {gpu_id=}")
+    llm_model = load_llm_model_gpu(gpu_id)
+else:
+    print(f"Load LLM CPU model")
+    llm_model = load_llm_model_cpu()
 qa_retriever = load_retriever(llm= llm_model, db= vector_database)
 conversational_qa_memory_retriever, question_generator = load_conversational_qa_memory_retriever()
 print("all load done")

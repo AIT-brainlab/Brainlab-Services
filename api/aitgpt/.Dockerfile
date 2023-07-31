@@ -1,4 +1,8 @@
-FROM python:3.10.6
+FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04
+
+RUN apt update && apt upgrade -y
+RUN apt install -y python3 python3-pip
+RUN rm -rf /var/cache/apt/archives /var/lib/apt/lists/*.
 
 EXPOSE 80
 

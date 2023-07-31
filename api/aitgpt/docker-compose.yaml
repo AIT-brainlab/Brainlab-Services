@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   web:
-    image: akraradets/aitgpt:1.0.0
+    image: akraradets/brainlab-aitgpt-cuda:1.0.1
     build:
       context: .
       dockerfile: .Dockerfile
@@ -9,9 +9,9 @@ services:
     # For development purpose, we map the entire `code` folder so it is convenient for development.
     volumes:
       - ./logs:/root/logs
-      - ./cache:/root/cache
+      - ./cache:/root/.cache
       # These two is for development only
-      # - ./code:/root/code
+      - ./code:/root/code
       # - ./.vscode-server:/root/.vscode-server
     labels:
       - traefik.enable=true
@@ -25,16 +25,18 @@ services:
       # This is for development only.
       # In the production, this will be commented out.
       # - 9000:8080
+    env_file:
+      - .env
     networks:
       - default
       - traefik_default
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
 
 networks:
   default:
