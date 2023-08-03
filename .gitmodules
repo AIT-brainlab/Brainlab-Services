@@ -2,3 +2,7 @@
 	path = api/gpt2detect
 	url = https://github.com/AIT-brainlab/AI-Content-Detector.git
 	branch = main
+[submodule "api/thaigovai"]
+	path = api/thaigovai
+	url = https://github.com/AIT-brainlab/ThaiGovAI.git
+	branch = main
