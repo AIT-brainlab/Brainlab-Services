@@ -60,7 +60,7 @@ c.DockerSpawner.volumes = {
         '/mnt/HDD/home/{username}/.ssh':'/home/{username}/.ssh'
         }
 c.DockerSpawner.extra_create_kwargs = {'user': 'root'}
-c.DockerSpawner.extra_host_config = {'runtime': 'nvidia'}
+c.DockerSpawner.extra_host_config = {'runtime': 'nvidia', 'ipc_mode':'host'}
 c.DockerSpawner.remove = True
 
 c.Spawner.environment = dict({})
