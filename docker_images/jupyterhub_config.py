@@ -49,6 +49,13 @@ class DockerSpawner(dockerspawner.DockerSpawner):
             self.port: (self.host_ip,),
             22: ("0.0.0.0",ssh_port),
         }
+
+        import docker
+        device_ids=["0"]
+        if(env["NB_USER"] in ['bci','aimanl']):
+            device_ids=["1"]
+        gpus = docker.types.DeviceRequest(device_ids=device_ids, capabilities=[['gpu']])
+        self.extra_host_config["device_requests"] = [gpus]
         return super().create_object()
 
 c.JupyterHub.spawner_class = DockerSpawner
@@ -60,7 +67,7 @@ c.DockerSpawner.volumes = {
         '/mnt/HDD/home/{username}/.ssh':'/home/{username}/.ssh'
         }
 c.DockerSpawner.extra_create_kwargs = {'user': 'root'}
-c.DockerSpawner.extra_host_config = {'runtime': 'nvidia'}
+c.DockerSpawner.extra_host_config = {'runtime': 'nvidia', 'ipc_mode':'host'}
 c.DockerSpawner.remove = True
 
 c.Spawner.environment = dict({})

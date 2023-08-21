@@ -41,10 +41,18 @@ PollIntervalMaxSec=2048
 ```
 Use `timedatectl` to check the active configuration and `systemctl restart systemd-timesyncd.service` to restart the service.
 
+To change time zone use this commad
+
+```sh
+sudo timedatectl set-timezone Asia/Bangkok
+```
+
 ## 3. Set Proxy for APT, update, and upgrade
 https://www.howtoforge.com/how-to-setup-apt-proxy-on-ubuntu/
 ## 4. Set locale
 ```sh
+sudo apt-get install -y locales
+sudo locale-gen en_US.UTF-8
 sudo update-locale LC_TIME=en_US.UTF-8
 ```
 ## 5. Install Nvidia driver via `Software & Updates` app
