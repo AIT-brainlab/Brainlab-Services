@@ -56,6 +56,7 @@ sudo locale-gen en_US.UTF-8
 sudo update-locale LC_TIME=en_US.UTF-8
 ```
 ## 5. Install Nvidia driver via `Software & Updates` app
+or using Ubuntu-Driver https://help.ubuntu.com/community/NvidiaDriversInstallation
 ## 6. Configuring NAS for `home`
 ```shell
 sudo apt install -y nfs-common
