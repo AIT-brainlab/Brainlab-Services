@@ -37,3 +37,7 @@ sn: [Lastname]
 givenName: [Firstname]
 jupyterSshPort: [ssh_port]
 mail: [stid]@ait.asia
+
+=====
+
+ldapdelete  -v -W -D "cn=admin,dc=ldap,dc=brainlab" "uid=[username],ou=people,dc=ldap,dc=brainlab"
