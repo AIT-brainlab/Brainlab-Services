@@ -7,6 +7,7 @@ Below is the step to install a new machine.
   - [1. Install Ubuntu 22.04 on the machine](#1-install-ubuntu-2204-on-the-machine)
   - [2. Configuring IP address, proxy, and /etc/hosts](#2-configuring-ip-address-proxy-and-etchosts)
     - [2-1. Configuring NTP](#2-1-configuring-ntp)
+    - [2-2. Configuring proxy](#2-2-configuring-proxy)
   - [3. Set Proxy for APT, update, and upgrade](#3-set-proxy-for-apt-update-and-upgrade)
   - [4. Set locale](#4-set-locale)
   - [5. Install Nvidia driver via `Software & Updates` app](#5-install-nvidia-driver-via-software--updates-app)
@@ -46,6 +47,32 @@ To change time zone use this commad
 ```sh
 sudo timedatectl set-timezone Asia/Bangkok
 ```
+
+### 2-2. Configuring proxy
+https://stackoverflow.com/questions/34021485/issue-on-making-requests-through-proxy-when-using-sudo-command
+
+The `http_proxy` and `https_proxy` should be set for both user and sudoers file.
+
+First, configuring `.bashrc` with
+
+```sh
+export http_proxy=http://192.41.170.23:3128
+export https_proxy=http://192.41.170.23:3128
+```
+
+Then, to keep the environment variables for the `sudo` command, do the following
+
+```sh
+$ sudo visudo
+```
+
+add this line
+
+```sh
+Defaults env_keep += "ftp_proxy http_proxy https_proxy no_proxy"
+```
+
+save and it should just work
 
 ## 3. Set Proxy for APT, update, and upgrade
 https://www.howtoforge.com/how-to-setup-apt-proxy-on-ubuntu/
