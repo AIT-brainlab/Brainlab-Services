@@ -41,3 +41,8 @@ mail: [stid]@ait.asia
 =====
 
 ldapdelete  -v -W -D "cn=admin,dc=ldap,dc=brainlab" "uid=[username],ou=people,dc=ldap,dc=brainlab"
+
+=====
+
+# Query all user in LDAP
+ldapsearch -x -LLL -W -D "cn=admin,dc=ldap,dc=brainlab" uid=*
